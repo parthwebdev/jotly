@@ -1,8 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { formSchema } from "@/lib/types";
 
 import {
   Form,
@@ -10,15 +12,12 @@ import {
   FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { formSchema } from "@/lib/types";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { LogIn } from "lucide-react";
 import Logo from "@/components/ui/logo";
+import { LogIn } from "lucide-react";
 
 const LoginPage = () => {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -57,7 +56,6 @@ const LoginPage = () => {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
                 <FormControl>
                   <Input
                     placeholder="Enter your email"
@@ -75,7 +73,6 @@ const LoginPage = () => {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
                 <FormControl>
                   <Input
                     placeholder="Enter password"
