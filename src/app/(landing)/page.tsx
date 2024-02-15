@@ -15,7 +15,7 @@ function LandingPage() {
         </p>
 
         <Button asChild>
-          <Link href="/login">Get Notion free</Link>
+          <Link href="/signup">Get Notion free</Link>
         </Button>
       </div>
 

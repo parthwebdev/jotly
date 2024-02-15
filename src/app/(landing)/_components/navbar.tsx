@@ -19,7 +19,7 @@ function Navbar() {
           Log in
         </Button>
         <Button size="sm" className="max-sm:hidden" asChild>
-          <Link href="/login">Get Notion free</Link>
+          <Link href="/signup">Get Notion free</Link>
         </Button>
       </div>
     </nav>
