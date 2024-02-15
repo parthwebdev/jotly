@@ -2,6 +2,7 @@ import Logo from "@/components/ui/logo";
 
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/ui/mode-toggle";
+import Link from "next/link";
 
 function Navbar() {
   return (
@@ -17,8 +18,8 @@ function Navbar() {
         >
           Log in
         </Button>
-        <Button size="sm" className="max-sm:hidden">
-          Get Notion free
+        <Button size="sm" className="max-sm:hidden" asChild>
+          <Link href="/login">Get Notion free</Link>
         </Button>
       </div>
     </nav>

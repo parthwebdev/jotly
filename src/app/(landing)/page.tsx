@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import Link from "next/link";
 
 function LandingPage() {
   return (
@@ -13,7 +14,9 @@ function LandingPage() {
           better, faster work happens.
         </p>
 
-        <Button>Get Notion free</Button>
+        <Button asChild>
+          <Link href="/login">Get Notion free</Link>
+        </Button>
       </div>
 
       <div className="flex justify-center items-center gap-16 pt-10 px-6">
