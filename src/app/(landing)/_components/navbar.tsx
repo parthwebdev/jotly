@@ -15,8 +15,9 @@ function Navbar() {
           variant="link"
           size="sm"
           className="text-foreground light:text-background"
+          asChild
         >
-          Log in
+          <Link href="/login">Log in</Link>
         </Button>
         <Button size="sm" className="max-sm:hidden" asChild>
           <Link href="/signup">Get Notion free</Link>

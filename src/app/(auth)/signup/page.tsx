@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
 import { LogIn } from "lucide-react";
-import { signupSchema } from "@/lib/types";
+import { formSchema, signupSchema } from "@/lib/types";
 import {
   Form,
   FormControl,
@@ -18,8 +18,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Logo from "@/components/ui/logo";
+import { signUpUser } from "@/actions/auth";
+import { useState } from "react";
+import Loader from "@/components/loader";
+import { useRouter } from "next/navigation";
 
 const SignupPage = () => {
+  const router = useRouter();
+  const [submitError, setSubmitError] = useState<string>("");
+
   const form = useForm<z.infer<typeof signupSchema>>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
@@ -29,7 +36,19 @@ const SignupPage = () => {
     },
   });
 
-  const onSubmit = async () => {};
+  const isLoading = form.formState.isSubmitting;
+
+  const onSubmit = async ({ email, password }: z.infer<typeof formSchema>) => {
+    const { error, data } = await signUpUser({ email, password });
+
+    if (error) {
+      form.reset();
+      setSubmitError(error.message);
+      return;
+    }
+
+    router.replace("/dashboard");
+  };
 
   return (
     <Form {...form}>
@@ -100,8 +119,10 @@ const SignupPage = () => {
           />
         </div>
 
+        {submitError && <FormMessage>{submitError}</FormMessage>}
+
         <div className="flex flex-col space-y-4">
-          <Button type="submit">Sign in</Button>
+          <Button type="submit">{!isLoading ? "Sign up" : <Loader />}</Button>
           <span className="text-center text-sm">OR</span>
           <Button variant="secondary" className="gap-2">
             <LogIn className="w-5" />

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,8 +19,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Logo from "@/components/ui/logo";
 import { LogIn } from "lucide-react";
+import { logInUser } from "@/actions/auth";
+import Loader from "@/components/loader";
+import { useRouter } from "next/navigation";
 
 const LoginPage = () => {
+  const router = useRouter();
+  const [submitError, setSubmitError] = useState<string>("");
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -28,11 +35,22 @@ const LoginPage = () => {
     },
   });
 
+  const isLoading = form.formState.isSubmitting;
+
   const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = async ({
     email,
     password,
   }) => {
-    console.log(email, password);
+    const { data, error } = await logInUser({ email, password });
+    console.log(data.user);
+
+    if (error) {
+      form.reset();
+      setSubmitError(error.message);
+      return;
+    }
+
+    router.replace("/dashboard");
   };
 
   return (
@@ -50,7 +68,7 @@ const LoginPage = () => {
           </FormDescription>
         </div>
 
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-5">
           <FormField
             control={form.control}
             name="email"
@@ -87,8 +105,12 @@ const LoginPage = () => {
           />
         </div>
 
+        {submitError && <FormMessage>{submitError}</FormMessage>}
+
         <div className="flex flex-col space-y-4">
-          <Button type="submit">Log in</Button>
+          <Button type="submit" disabled={isLoading}>
+            {!isLoading ? "Log in" : <Loader />}
+          </Button>
           <span className="text-center text-sm">OR</span>
           <Button variant="secondary" className="gap-2">
             <LogIn className="w-5" />
