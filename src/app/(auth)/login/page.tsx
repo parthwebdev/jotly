@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { formSchema } from "@/lib/types";
+import { LogIn } from "lucide-react";
 
 import {
   Form,
@@ -18,14 +20,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Logo from "@/components/ui/logo";
-import { LogIn } from "lucide-react";
-import { logInUser } from "@/actions/auth";
 import Loader from "@/components/loader";
-import { useRouter } from "next/navigation";
+import { formSchema } from "@/lib/types";
+import { logInUser } from "@/actions/auth";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 const LoginPage = () => {
   const router = useRouter();
   const [submitError, setSubmitError] = useState<string>("");
+  const supabase = createClientComponentClient();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -41,8 +44,7 @@ const LoginPage = () => {
     email,
     password,
   }) => {
-    const { data, error } = await logInUser({ email, password });
-    console.log(data.user);
+    const { error } = await logInUser({ email, password });
 
     if (error) {
       form.reset();
@@ -51,6 +53,17 @@ const LoginPage = () => {
     }
 
     router.replace("/dashboard");
+  };
+
+  const handleSignInWithGoogle = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `http://localhost:3000/api/auth/callback`,
+      },
+    });
+
+    router.refresh();
   };
 
   return (
@@ -112,7 +125,12 @@ const LoginPage = () => {
             {!isLoading ? "Log in" : <Loader />}
           </Button>
           <span className="text-center text-sm">OR</span>
-          <Button variant="secondary" className="gap-2">
+          <Button
+            type="button"
+            variant="secondary"
+            className="gap-2"
+            onClick={handleSignInWithGoogle}
+          >
             <LogIn className="w-5" />
             Log in with Google
           </Button>
