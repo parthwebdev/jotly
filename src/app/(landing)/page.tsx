@@ -1,8 +1,19 @@
-import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
+import { cookies } from "next/headers";
 
-function LandingPage() {
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { ArrowRight } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+
+async function LandingPage() {
+  const supabase = createServerComponentClient({ cookies });
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   return (
     <div className="flex flex-col justify-center items-center pt-8 px-8">
       <div className="max-w-3xl text-center space-y-4">
@@ -14,9 +25,16 @@ function LandingPage() {
           better, faster work happens.
         </p>
 
-        <Button asChild>
-          <Link href="/signup">Get Notion free</Link>
-        </Button>
+        {user ? (
+          <Button className="flex gap-1 mx-auto">
+            <Link href="/dashboard">Enter Notion</Link>
+            <ArrowRight className="w-4" />
+          </Button>
+        ) : (
+          <Button asChild>
+            <Link href="/signup">Get Notion free</Link>
+          </Button>
+        )}
       </div>
 
       <div className="flex justify-center items-center gap-16 pt-10 px-6">
