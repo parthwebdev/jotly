@@ -1,14 +1,19 @@
-import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import {
+  AnyPgColumn,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+} from "drizzle-orm/pg-core";
 import { users } from "../../../migrations/schema";
 
 export const workspaces = pgTable("workspaces", {
   id: uuid("id").defaultRandom().primaryKey().notNull(),
   title: text("title").notNull(),
-  iconId: text("icon_id").notNull(),
   data: text("data"),
-  inTrash: text("in_trash"),
+  icon: text("icon").notNull(),
   logo: text("logo"),
-  bannerUrl: text("banner_url"),
+  banner: text("banner"),
   createdAt: timestamp("created_at", {
     withTimezone: true,
     mode: "string",
@@ -20,41 +25,23 @@ export const workspaces = pgTable("workspaces", {
     .references(() => users.id, { onDelete: "cascade" }),
 });
 
-export const folders = pgTable("folders", {
+export const documents = pgTable("documents", {
   id: uuid("id").defaultRandom().primaryKey().notNull(),
   title: text("title").notNull(),
-  iconId: text("icon_id").notNull(),
   data: text("data"),
-  bannerUrl: text("banner_url").notNull(),
+  icon: text("icon").notNull(),
+  banner: text("banner"),
+  inTrash: text("in_trash"),
   createdAt: timestamp("created_at", {
     withTimezone: true,
     mode: "string",
   })
     .defaultNow()
     .notNull(),
+  parentId: uuid("parent_id").references((): AnyPgColumn => documents.id, {
+    onDelete: "cascade",
+  }),
   workspaceId: uuid("workspace_id")
     .notNull()
-    .references(() => workspaces.id, {
-      onDelete: "cascade",
-    }),
-});
-
-export const files = pgTable("files", {
-  id: uuid("id").defaultRandom().primaryKey().notNull(),
-  title: text("title").notNull(),
-  iconId: text("icon_id").notNull(),
-  data: text("data"),
-  inTrash: text("in_trash"),
-  bannerUrl: text("banner_url"),
-  createdAt: timestamp("created_at", {
-    withTimezone: true,
-    mode: "string",
-  })
-    .defaultNow()
-    .notNull(),
-  folderId: uuid("folder_id")
-    .notNull()
-    .references(() => folders.id, {
-      onDelete: "cascade",
-    }),
+    .references(() => workspaces.id),
 });
