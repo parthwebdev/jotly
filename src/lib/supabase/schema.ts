@@ -45,3 +45,6 @@ export const documents = pgTable("documents", {
     .notNull()
     .references(() => workspaces.id),
 });
+
+export type InsertWorkspace = typeof workspaces.$inferInsert;
+export type SelectWorkspace = typeof workspaces.$inferSelect;
