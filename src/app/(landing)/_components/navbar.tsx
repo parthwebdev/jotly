@@ -19,8 +19,6 @@ async function Navbar() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  console.log(user);
-
   return (
     <nav className="px-10 py-6 flex justify-between items-center">
       <Logo />

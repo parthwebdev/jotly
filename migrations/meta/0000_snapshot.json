@@ -1,6 +1,6 @@
 {
-  "id": "eb05f3d4-f83d-41ac-a1de-2004787e295a",
-  "prevId": "ccb31925-9fcf-45ef-ae59-fde681ffad2f",
+  "id": "209c2c52-f513-4252-8d26-395fa133e585",
+  "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
   "tables": {
@@ -27,14 +27,14 @@
           "primaryKey": false,
           "notNull": false
         },
-        "icon_id": {
-          "name": "icon_id",
+        "icon": {
+          "name": "icon",
           "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "banner_url": {
-          "name": "banner_url",
+        "banner": {
+          "name": "banner",
           "type": "text",
           "primaryKey": false,
           "notNull": false
@@ -120,8 +120,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "icon_id": {
-          "name": "icon_id",
+        "icon": {
+          "name": "icon",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -132,8 +132,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "banner_url": {
-          "name": "banner_url",
+        "banner": {
+          "name": "banner",
           "type": "text",
           "primaryKey": false,
           "notNull": false

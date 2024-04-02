@@ -3,24 +3,10 @@
   "dialect": "pg",
   "entries": [
     {
-      "idx": 3,
+      "idx": 0,
       "version": "5",
-      "when": 1710409350949,
-      "tag": "0003_concerned_giant_girl",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "5",
-      "when": 1711710054902,
-      "tag": "0004_friendly_nick_fury",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "5",
-      "when": 1711710204556,
-      "tag": "0005_lovely_harry_osborn",
+      "when": 1712058045744,
+      "tag": "0000_bored_mulholland_black",
       "breakpoints": true
     }
   ]
