@@ -7,10 +7,15 @@ interface SidebarProps {
 
 const SidebarItem = ({ icon: Icon, label }: SidebarProps) => {
   return (
-    <div className="flex gap-2 hover:bg-primary/5">
-      <Icon />
+    <button
+      className="
+      w-full py-1 px-4 flex items-center gap-2
+      text-muted-foreground text-sm hover:bg-secondary/60
+    "
+    >
+      <Icon className="size-4" />
       <span>{label}</span>
-    </div>
+    </button>
   );
 };
 export default SidebarItem;
