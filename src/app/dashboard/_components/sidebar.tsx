@@ -2,10 +2,11 @@ import { cookies } from "next/headers";
 
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 
-import { getWorkspaces } from "@/lib/supabase/queries";
+import { ChevronRight, Plus, PlusCircle, Search, Settings } from "lucide-react";
+
+import { getDocuments, getWorkspaces } from "@/lib/supabase/queries";
 import WorkspaceDropdown from "./workspace-dropdown";
-import SidebarItem from "./SidebarItem";
-import { PlusCircle, Search, Settings } from "lucide-react";
+import SidebarItem from "./sidebar-item";
 
 const Sidebar = async ({ params }: { params: { workspaceId: string } }) => {
   const supabase = createServerComponentClient({ cookies });
@@ -16,7 +17,15 @@ const Sidebar = async ({ params }: { params: { workspaceId: string } }) => {
 
   if (!user) return;
 
-  const { data: workspaces, error } = await getWorkspaces(user.id);
+  // Get the User's Workspaces
+  const { data: workspaces, error: workspaceError } = await getWorkspaces(
+    user.id
+  );
+
+  // Get the Documents for the selected Workspace
+  const { data: documents, error: documentsError } = await getDocuments(
+    params.workspaceId
+  );
 
   return (
     <aside className="h-screen flex flex-col gap-5 py-5 w-[240px] border border-r-2">
@@ -34,14 +43,36 @@ const Sidebar = async ({ params }: { params: { workspaceId: string } }) => {
       </div>
 
       {/* Sidebar Items */}
-      <div className="w-full">
-        <SidebarItem icon={Search} label="Search" />
+      <div>
+        <SidebarItem icon={Search} label="Search" isSearch />
         <SidebarItem icon={Settings} label="Settings" />
-        <SidebarItem icon={PlusCircle} label="New Page" />
+        <SidebarItem icon={PlusCircle} label="New Document" />
       </div>
 
-      {/* FOLDERS for selected Workspace */}
-      <div></div>
+      {/* DOCUMENTS for selected Workspace */}
+      <div className="text-sm font-medium">
+        {documents.map((document) => (
+          <div
+            key={document.id}
+            role="button"
+            className="py-1 px-3 flex items-center hover:bg-primary/10"
+          >
+            <div className="h-full rounded-sm hover:bg-muted mr-1">
+              <ChevronRight className="size-[18px] text-muted-foreground/60" />
+            </div>
+
+            <div className="mr-2">{document.icon}</div>
+            <span className="text-muted-foreground">{document.title}</span>
+
+            <div
+              role="button"
+              className="h-full p-[1px] ml-auto rounded-sm hover:bg-muted mr-1"
+            >
+              <Plus className="size-4 text-muted-foreground" />
+            </div>
+          </div>
+        ))}
+      </div>
     </aside>
   );
 };
