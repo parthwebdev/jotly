@@ -26,9 +26,11 @@ async function LandingPage() {
         </p>
 
         {user ? (
-          <Button className="flex gap-1 mx-auto">
-            <Link href="/dashboard">Enter Notion</Link>
-            <ArrowRight className="w-4" />
+          <Button asChild>
+            <Link href="/dashboard" className="flex gap-1 mx-auto">
+              Enter Notion
+              <ArrowRight className="w-4" />
+            </Link>
           </Button>
         ) : (
           <Button asChild>
