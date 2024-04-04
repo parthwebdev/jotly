@@ -48,3 +48,5 @@ export const documents = pgTable("documents", {
 
 export type InsertWorkspace = typeof workspaces.$inferInsert;
 export type SelectWorkspace = typeof workspaces.$inferSelect;
+export type InsertDocument = typeof documents.$inferInsert;
+export type SelectDocument = typeof documents.$inferSelect;
