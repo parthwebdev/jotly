@@ -7,6 +7,8 @@ import { ChevronRight, Plus, PlusCircle, Search, Settings } from "lucide-react";
 import { getDocuments, getWorkspaces } from "@/lib/supabase/queries";
 import WorkspaceDropdown from "./workspace-dropdown";
 import SidebarItem from "./sidebar-item";
+import DocumentItem from "./document-item";
+import DocumentList from "./document-list";
 
 const Sidebar = async ({ params }: { params: { workspaceId: string } }) => {
   const supabase = createServerComponentClient({ cookies });
@@ -51,27 +53,7 @@ const Sidebar = async ({ params }: { params: { workspaceId: string } }) => {
 
       {/* DOCUMENTS for selected Workspace */}
       <div className="text-sm font-medium">
-        {documents.map((document) => (
-          <div
-            key={document.id}
-            role="button"
-            className="py-1 px-3 flex items-center hover:bg-primary/10"
-          >
-            <div className="h-full rounded-sm hover:bg-muted mr-1">
-              <ChevronRight className="size-[18px] text-muted-foreground/60" />
-            </div>
-
-            <div className="mr-2">{document.icon}</div>
-            <span className="text-muted-foreground">{document.title}</span>
-
-            <div
-              role="button"
-              className="h-full p-[1px] ml-auto rounded-sm hover:bg-muted mr-1"
-            >
-              <Plus className="size-4 text-muted-foreground" />
-            </div>
-          </div>
-        ))}
+        <DocumentList documents={documents} />
       </div>
     </aside>
   );
