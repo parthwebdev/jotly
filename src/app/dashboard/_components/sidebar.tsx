@@ -7,7 +7,6 @@ import { ChevronRight, Plus, PlusCircle, Search, Settings } from "lucide-react";
 import { getDocuments, getWorkspaces } from "@/lib/supabase/queries";
 import WorkspaceDropdown from "./workspace-dropdown";
 import SidebarItem from "./sidebar-item";
-import DocumentItem from "./document-item";
 import DocumentList from "./document-list";
 
 const Sidebar = async ({ params }: { params: { workspaceId: string } }) => {

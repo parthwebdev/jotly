@@ -1,10 +1,10 @@
 "use client";
 
-import { SelectDocument } from "@/lib/supabase/schema";
+import React, { useEffect, useState } from "react";
 
-import DocumentItem from "./document-item";
-import { useEffect, useState } from "react";
+import { SelectDocument } from "@/lib/supabase/schema";
 import { getChildDocuments } from "@/lib/supabase/queries";
+import DocumentItem from "./document-item";
 
 interface DocumentListProps {
   documents?: SelectDocument[];
@@ -21,6 +21,7 @@ const DocumentList = ({
   const [documentsData, setDocumentsData] = useState<SelectDocument[]>(
     documents || []
   );
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const onExpand = (docuemntId: string) => {
     setIsExpanded((prev) => ({
@@ -31,28 +32,44 @@ const DocumentList = ({
 
   useEffect(() => {
     if (parentId) {
-      const getData = async () => {
-        getChildDocuments(parentId).then((response) => {
-          if (response.data) {
-            setDocumentsData(response.data);
-            console.log(response.data);
-          }
-        });
+      const getChildData = async () => {
+        setIsLoading(true);
+        const { data, error } = await getChildDocuments(parentId);
+        if (error) {
+          console.log(error);
+          return;
+        }
+        setDocumentsData(data);
+        setIsLoading(false);
       };
 
-      getData();
+      getChildData();
     }
-  }, [parentId, documents]);
+  }, [parentId]);
+
+  if (isLoading) {
+    return (
+      <>
+        <DocumentItem.Skeleton level={level} />
+        {level === 0 && (
+          <>
+            <DocumentItem.Skeleton level={level} />
+            <DocumentItem.Skeleton level={level} />
+          </>
+        )}
+      </>
+    );
+  }
 
   return (
     <>
       {documentsData.map((document) => (
-        <div key={document.id}>
+        <React.Fragment key={document.id}>
           <DocumentItem document={document} onExpand={onExpand} level={level} />
           {isExpanded[document.id] && (
             <DocumentList parentId={document.id} level={level + 1} />
           )}
-        </div>
+        </React.Fragment>
       ))}
     </>
   );
