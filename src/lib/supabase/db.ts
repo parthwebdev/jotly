@@ -7,6 +7,6 @@ if (!process.env.DATABASE_URL) {
 }
 
 const client = postgres(process.env.DATABASE_URL!, { max: 1, prepare: false });
-const db = drizzle(client, { schema, logger: true });
+const db = drizzle(client, { schema });
 
 export default db;

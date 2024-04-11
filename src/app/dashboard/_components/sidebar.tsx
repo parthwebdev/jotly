@@ -2,12 +2,13 @@ import { cookies } from "next/headers";
 
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 
-import { ChevronRight, Plus, PlusCircle, Search, Settings } from "lucide-react";
+import { Search, Settings } from "lucide-react";
 
 import { getDocuments, getWorkspaces } from "@/lib/supabase/queries";
 import WorkspaceDropdown from "./workspace-dropdown";
 import SidebarItem from "./sidebar-item";
 import DocumentList from "./document-list";
+import CreateDocument from "./create-document";
 
 const Sidebar = async ({ params }: { params: { workspaceId: string } }) => {
   const supabase = createServerComponentClient({ cookies });
@@ -28,6 +29,8 @@ const Sidebar = async ({ params }: { params: { workspaceId: string } }) => {
     params.workspaceId
   );
 
+  // TODO: Handle documents and workspace ERROR
+
   return (
     <aside className="h-screen flex flex-col gap-5 py-5 w-[240px] border border-r-2">
       {/* Workspace Dropdown */}
@@ -47,7 +50,7 @@ const Sidebar = async ({ params }: { params: { workspaceId: string } }) => {
       <div>
         <SidebarItem icon={Search} label="Search" isSearch />
         <SidebarItem icon={Settings} label="Settings" />
-        <SidebarItem icon={PlusCircle} label="New Document" />
+        <CreateDocument workspaceId={params.workspaceId} />
       </div>
 
       {/* DOCUMENTS for selected Workspace */}

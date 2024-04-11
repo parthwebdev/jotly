@@ -31,10 +31,15 @@ const DocumentList = ({
   };
 
   useEffect(() => {
+    setDocumentsData(documents || []);
+  }, [documents]);
+
+  useEffect(() => {
     if (parentId) {
       const getChildData = async () => {
         setIsLoading(true);
         const { data, error } = await getChildDocuments(parentId);
+        // TODO: Add toast for error and success
         if (error) {
           console.log(error);
           return;
@@ -61,6 +66,19 @@ const DocumentList = ({
     );
   }
 
+  if (documentsData.length === 0 && !isLoading) {
+    return (
+      <p
+        style={{
+          paddingLeft: level ? `${level * 12 + 25}px` : "12px",
+        }}
+        className="text-muted-foreground"
+      >
+        No pages found
+      </p>
+    );
+  }
+
   return (
     <>
       {documentsData.map((document) => (
@@ -74,4 +92,5 @@ const DocumentList = ({
     </>
   );
 };
+
 export default DocumentList;
