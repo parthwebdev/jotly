@@ -3,91 +3,57 @@
 import React, { useEffect, useState } from "react";
 
 import { SelectDocument } from "@/lib/supabase/schema";
-import { getChildDocuments } from "@/lib/supabase/queries";
+import useSupabaseRealtime from "@/hooks/useSupabaseRealtime";
+
+import { useAppState } from "@/components/providers/state-provider";
 import DocumentItem from "./document-item";
 
 interface DocumentListProps {
   documents?: SelectDocument[];
-  parentId?: string;
-  level?: number;
+  workspaceId: string;
 }
 
-const DocumentList = ({
-  documents,
-  parentId,
-  level = 0,
-}: DocumentListProps) => {
-  const [isExpanded, setIsExpanded] = useState<Record<string, boolean>>({});
-  const [documentsData, setDocumentsData] = useState<SelectDocument[]>(
-    documents || []
-  );
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+const DocumentList = ({ documents = [], workspaceId }: DocumentListProps) => {
+  // useSupabaseRealtime(); // Listen to Realtime Database changes using supabase
 
-  const onExpand = (docuemntId: string) => {
-    setIsExpanded((prev) => ({
-      ...prev,
-      [docuemntId]: !prev[docuemntId],
-    }));
-  };
+  const [documentsData, setDocumentsData] = useState(documents);
+  const { state, dispatch } = useAppState();
 
   useEffect(() => {
-    setDocumentsData(documents || []);
-  }, [documents]);
-
-  useEffect(() => {
-    if (parentId) {
-      const getChildData = async () => {
-        setIsLoading(true);
-        const { data, error } = await getChildDocuments(parentId);
-        // TODO: Add toast for error and success
-        if (error) {
-          console.log(error);
-          return;
-        }
-        setDocumentsData(data);
-        setIsLoading(false);
-      };
-
-      getChildData();
+    if (documents?.length > 0) {
+      dispatch({
+        type: "SET_DOCUMENTS",
+        payload: {
+          workspaceId,
+          documents:
+            documents?.map((document) => ({
+              ...document,
+              childDocuments:
+                state.workspaces
+                  .find((workspace) => workspace.id === workspaceId)
+                  ?.documents.find((doc) => doc.id === document.id)
+                  ?.childDocuments || [],
+            })) || [],
+        },
+      });
     }
-  }, [parentId]);
+  }, [documents, dispatch, workspaceId]);
 
-  if (isLoading) {
-    return (
-      <>
-        <DocumentItem.Skeleton level={level} />
-        {level === 0 && (
-          <>
-            <DocumentItem.Skeleton level={level} />
-            <DocumentItem.Skeleton level={level} />
-          </>
-        )}
-      </>
+  useEffect(() => {
+    setDocumentsData(
+      state.workspaces.find((workspace) => workspace.id === workspaceId)
+        ?.documents || []
     );
-  }
-
-  if (documentsData.length === 0 && !isLoading) {
-    return (
-      <p
-        style={{
-          paddingLeft: level ? `${level * 12 + 25}px` : "12px",
-        }}
-        className="text-muted-foreground"
-      >
-        No pages found
-      </p>
-    );
-  }
+  }, [state, workspaceId]);
 
   return (
     <>
       {documentsData.map((document) => (
-        <React.Fragment key={document.id}>
-          <DocumentItem document={document} onExpand={onExpand} level={level} />
-          {isExpanded[document.id] && (
-            <DocumentList parentId={document.id} level={level + 1} />
-          )}
-        </React.Fragment>
+        <DocumentItem
+          key={document.id}
+          document={document}
+          workspaceId={workspaceId}
+        />
       ))}
     </>
   );

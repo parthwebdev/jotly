@@ -3,7 +3,7 @@
 import { and, eq, isNull } from "drizzle-orm";
 
 import db from "./db";
-import { documents, workspaces } from "./schema";
+import { SelectDocument, documents, workspaces } from "./schema";
 import { revalidatePath } from "next/cache";
 
 export const getWorkspaces = async (userId: string) => {
@@ -22,7 +22,6 @@ export const getWorkspaces = async (userId: string) => {
 
 export const getDocuments = async (workspaceId: string) => {
   try {
-    console.log("🟢 Fetching Documents....");
     const data = await db
       .select()
       .from(documents)
@@ -39,10 +38,10 @@ export const getDocuments = async (workspaceId: string) => {
 
 export const getChildDocuments = async (parentId: string) => {
   try {
-    const data = await db
+    const data = (await db
       .select()
       .from(documents)
-      .where(eq(documents.parentId, parentId));
+      .where(eq(documents.parentId, parentId))) as SelectDocument[] | [];
 
     return { data, error: null };
   } catch (error) {
@@ -51,12 +50,16 @@ export const getChildDocuments = async (parentId: string) => {
   }
 };
 
-export const createDocument = async (workspaceId: string) => {
+export const createDocument = async (
+  workspaceId: string,
+  parentId?: string
+) => {
   try {
     await db.insert(documents).values({
       title: "Untitled",
       icon: "📄",
       workspaceId,
+      ...(parentId && { parentId }),
     });
 
     revalidatePath(`/dashboard/${workspaceId}`);

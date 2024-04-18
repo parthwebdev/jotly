@@ -29,7 +29,7 @@ const Sidebar = async ({ params }: { params: { workspaceId: string } }) => {
     params.workspaceId
   );
 
-  // TODO: Handle documents and workspace ERROR
+  if (documentsError || workspaceError) return;
 
   return (
     <aside className="h-screen flex flex-col gap-5 py-5 w-[240px] border border-r-2">
@@ -55,7 +55,7 @@ const Sidebar = async ({ params }: { params: { workspaceId: string } }) => {
 
       {/* DOCUMENTS for selected Workspace */}
       <div className="text-sm font-medium">
-        <DocumentList documents={documents} />
+        <DocumentList documents={documents} workspaceId={params.workspaceId} />
       </div>
     </aside>
   );

@@ -1,11 +1,19 @@
 "use client";
 
-import { createDocument } from "@/lib/supabase/queries";
 import { PlusCircle } from "lucide-react";
+import { toast } from "sonner";
+
+import { createDocument } from "@/lib/supabase/queries";
 
 const CreateDocument = ({ workspaceId }: { workspaceId: string }) => {
   const handleCreate = async () => {
-    await createDocument(workspaceId);
+    // TODO: Update local state
+
+    const { error } = await createDocument(workspaceId);
+
+    if (error) toast.error("Cannot create document.");
+
+    toast.success("New document created!");
 
     // TODO: Navigate to the newly created document page
   };

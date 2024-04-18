@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { ChevronsLeftRight, PlusIcon } from "lucide-react";
 
@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SelectWorkspace } from "@/lib/supabase/schema";
+import { useAppState } from "@/components/providers/state-provider";
 
 const WorkspaceDropdown = ({
   workspaces,
@@ -22,6 +23,21 @@ const WorkspaceDropdown = ({
   defaultValue: SelectWorkspace | undefined;
 }) => {
   // const [selectedWorkspace, setSelectedWorkspace] = useState(defaultValue);
+  const { state, dispatch } = useAppState();
+
+  useEffect(() => {
+    if (!state.workspaces.length) {
+      dispatch({
+        type: "SET_WORKSPACES",
+        payload: {
+          workspaces: workspaces.map((workspace) => ({
+            ...workspace,
+            documents: [],
+          })),
+        },
+      });
+    }
+  }, [workspaces, dispatch]);
 
   return (
     <DropdownMenu>
