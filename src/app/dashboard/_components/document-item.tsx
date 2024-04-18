@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { ChevronRight, Plus } from "lucide-react";
+import { ChevronDown, ChevronRight, Plus } from "lucide-react";
 import { toast } from "sonner";
 
 import { SelectDocument } from "@/lib/supabase/schema";
@@ -21,29 +21,10 @@ const DocumentItem = ({
   level = 0,
   workspaceId,
 }: DocumentItemProps) => {
-  const [childDocuments, setChildDocuments] = useState<SelectDocument[] | []>(
-    document
-  );
+  const [childDocuments, setChildDocuments] = useState<SelectDocument[] | []>();
   const [isExpanded, setIsExpanded] = useState<Record<string, boolean>>({});
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { state, dispatch } = useAppState();
-
-  const onExpand = (docuemntId: string) => {
-    setIsExpanded((prev) => ({
-      ...prev,
-      [docuemntId]: !prev[docuemntId],
-    }));
-  };
-
-  const handleCreate = async (documentId: string) => {
-    // TODO: Update local state
-
-    const { error } = await createDocument(workspaceId, documentId);
-
-    if (error) toast.error("Cannot create document.");
-
-    toast.success("New document created!");
-  };
 
   useEffect(() => {
     const getChildData = async () => {
@@ -66,7 +47,29 @@ const DocumentItem = ({
     };
 
     getChildData();
-  }, [document.id, dispatch, workspaceId]);
+  }, [document.id, workspaceId]);
+
+  const childDocs =
+    state.workspaces
+      .find((workspace) => workspace.id === workspaceId)
+      ?.documents.find((doc) => doc.id === document.id)?.childDocuments || [];
+
+  const onExpand = (docuemntId: string) => {
+    setIsExpanded((prev) => ({
+      ...prev,
+      [docuemntId]: !prev[docuemntId],
+    }));
+  };
+
+  const handleCreate = async (documentId: string) => {
+    // TODO: Update local state
+
+    const { error } = await createDocument(workspaceId, documentId);
+
+    if (error) toast.error("Cannot create document.");
+
+    toast.success("New document created!");
+  };
 
   return (
     <>
@@ -83,7 +86,11 @@ const DocumentItem = ({
           className="h-full rounded-sm hover:bg-muted mr-1"
           onClick={() => onExpand(document.id)}
         >
-          <ChevronRight className="size-[18px] text-muted-foreground/60" />
+          {isExpanded[document.id] ? (
+            <ChevronDown className="size-[18px] text-muted-foreground/60" />
+          ) : (
+            <ChevronRight className="size-[18px] text-muted-foreground/60" />
+          )}
         </div>
 
         <div className="mr-2">{document.icon}</div>
@@ -98,17 +105,25 @@ const DocumentItem = ({
         </div>
       </div>
       {isExpanded[document.id] &&
-        state.workspaces
-          .find((workspace) => workspace.id === workspaceId)
-          ?.documents.find((doc) => doc.id === document.id)
-          ?.childDocuments.map((doc) => (
+        (childDocs.length > 0 ? (
+          childDocs.map((doc) => (
             <DocumentItem
               key={doc.id}
               document={doc}
               level={level + 1}
               workspaceId={workspaceId}
             />
-          ))}
+          ))
+        ) : (
+          <p
+            style={{
+              paddingLeft: `${(level + 1) * 12 + 25}px`,
+            }}
+            className="text-muted-foreground"
+          >
+            No pages found
+          </p>
+        ))}
     </>
   );
 };

@@ -3,7 +3,12 @@
 import { and, eq, isNull } from "drizzle-orm";
 
 import db from "./db";
-import { SelectDocument, documents, workspaces } from "./schema";
+import {
+  InsertDocument,
+  SelectDocument,
+  documents,
+  workspaces,
+} from "./schema";
 import { revalidatePath } from "next/cache";
 
 export const getWorkspaces = async (userId: string) => {
@@ -51,18 +56,15 @@ export const getChildDocuments = async (parentId: string) => {
 };
 
 export const createDocument = async (
-  workspaceId: string,
+  document: InsertDocument,
   parentId?: string
 ) => {
   try {
     await db.insert(documents).values({
-      title: "Untitled",
-      icon: "📄",
-      workspaceId,
+      ...document,
       ...(parentId && { parentId }),
     });
 
-    revalidatePath(`/dashboard/${workspaceId}`);
     return { data: null, error: null };
   } catch (error) {
     console.log("🔴 Error:", error);

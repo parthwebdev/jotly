@@ -2,14 +2,37 @@
 
 import { PlusCircle } from "lucide-react";
 import { toast } from "sonner";
+import { v4 as uuidv4 } from "uuid";
 
 import { createDocument } from "@/lib/supabase/queries";
+import { useAppState } from "@/components/providers/state-provider";
+import { SelectDocument } from "@/lib/supabase/schema";
 
 const CreateDocument = ({ workspaceId }: { workspaceId: string }) => {
+  const { dispatch } = useAppState();
   const handleCreate = async () => {
-    // TODO: Update local state
+    const newDocument: SelectDocument = {
+      id: uuidv4(),
+      workspaceId,
+      title: "Untitled",
+      icon: "📄",
+      data: null,
+      banner: null,
+      inTrash: null,
+      createdAt: new Date().toISOString(),
+      parentId: null,
+    };
 
-    const { error } = await createDocument(workspaceId);
+    // TODO: Update local state
+    dispatch({
+      type: "ADD_DOCUMENT",
+      payload: {
+        workspaceId,
+        document: { ...newDocument, childDocuments: [] },
+      },
+    });
+
+    const { error } = await createDocument(newDocument);
 
     if (error) toast.error("Cannot create document.");
 
