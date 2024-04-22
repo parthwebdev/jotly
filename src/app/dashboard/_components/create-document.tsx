@@ -23,12 +23,11 @@ const CreateDocument = ({ workspaceId }: { workspaceId: string }) => {
       parentId: null,
     };
 
-    // TODO: Update local state
     dispatch({
       type: "ADD_DOCUMENT",
       payload: {
         workspaceId,
-        document: { ...newDocument, childDocuments: [] },
+        document: newDocument,
       },
     });
 

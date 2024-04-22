@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { ChevronDown, ChevronRight, Plus } from "lucide-react";
 import { toast } from "sonner";
+import { v4 } from "uuid";
 
 import { SelectDocument } from "@/lib/supabase/schema";
 import { Skeleton } from "@/components/ui/skeleton";
-import { createDocument, getChildDocuments } from "@/lib/supabase/queries";
+import { createDocument } from "@/lib/supabase/queries";
 import { useAppState } from "@/components/providers/state-provider";
 
 interface DocumentItemProps {
@@ -21,38 +22,14 @@ const DocumentItem = ({
   level = 0,
   workspaceId,
 }: DocumentItemProps) => {
-  const [childDocuments, setChildDocuments] = useState<SelectDocument[] | []>();
   const [isExpanded, setIsExpanded] = useState<Record<string, boolean>>({});
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { state, dispatch } = useAppState();
 
-  useEffect(() => {
-    const getChildData = async () => {
-      setIsLoading(true);
-      const { data, error } = await getChildDocuments(document.id);
-      setChildDocuments(data);
-
-      if (error) return;
-
-      dispatch({
-        type: "SET_CHILD_DOCUMENTS",
-        payload: {
-          workspaceId,
-          documentId: document.id,
-          documents: data.map((doc) => ({ ...doc, childDocuments: [] })),
-        },
-      });
-
-      setIsLoading(false);
-    };
-
-    getChildData();
-  }, [document.id, workspaceId]);
-
-  const childDocs =
-    state.workspaces
+  const childDocuments = useMemo(() => {
+    return state.workspaces
       .find((workspace) => workspace.id === workspaceId)
-      ?.documents.find((doc) => doc.id === document.id)?.childDocuments || [];
+      ?.documents.filter((doc) => doc.parentId === document.id);
+  }, [document.id, workspaceId, state.workspaces]);
 
   const onExpand = (docuemntId: string) => {
     setIsExpanded((prev) => ({
@@ -62,13 +39,30 @@ const DocumentItem = ({
   };
 
   const handleCreate = async (documentId: string) => {
-    // TODO: Update local state
+    const newDocument: SelectDocument = {
+      id: v4(),
+      workspaceId,
+      title: "Untitled",
+      icon: "📄",
+      data: null,
+      banner: null,
+      inTrash: null,
+      createdAt: new Date().toISOString(),
+      parentId: document.id,
+    };
 
-    const { error } = await createDocument(workspaceId, documentId);
+    dispatch({
+      type: "ADD_DOCUMENT",
+      payload: {
+        workspaceId,
+        document: newDocument,
+      },
+    });
+
+    const { error } = await createDocument(newDocument, documentId);
 
     if (error) toast.error("Cannot create document.");
-
-    toast.success("New document created!");
+    else toast.success("New document created!");
   };
 
   return (
@@ -104,9 +98,9 @@ const DocumentItem = ({
           <Plus className="size-4 text-muted-foreground" />
         </div>
       </div>
-      {isExpanded[document.id] &&
-        (childDocs.length > 0 ? (
-          childDocs.map((doc) => (
+      {isExpanded[document.id] ? (
+        childDocuments && childDocuments.length > 0 ? (
+          childDocuments?.map((doc) => (
             <DocumentItem
               key={doc.id}
               document={doc}
@@ -123,7 +117,8 @@ const DocumentItem = ({
           >
             No pages found
           </p>
-        ))}
+        )
+      ) : null}
     </>
   );
 };

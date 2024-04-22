@@ -30,9 +30,8 @@ export const getDocuments = async (workspaceId: string) => {
     const data = await db
       .select()
       .from(documents)
-      .where(
-        and(eq(documents.workspaceId, workspaceId), isNull(documents.parentId))
-      );
+      .where(and(eq(documents.workspaceId, workspaceId)));
+    console.log(data);
 
     return { data, error: null };
   } catch (error) {

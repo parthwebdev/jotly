@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import { SelectDocument } from "@/lib/supabase/schema";
 import useSupabaseRealtime from "@/hooks/useSupabaseRealtime";
@@ -16,8 +16,7 @@ interface DocumentListProps {
 const DocumentList = ({ documents = [], workspaceId }: DocumentListProps) => {
   useSupabaseRealtime(); // Listen to Realtime Database changes using supabase
 
-  const [documentsData, setDocumentsData] = useState(documents);
-  const { state, dispatch } = useAppState();
+  const { dispatch } = useAppState();
 
   useEffect(() => {
     if (documents?.length > 0) {
@@ -25,30 +24,21 @@ const DocumentList = ({ documents = [], workspaceId }: DocumentListProps) => {
         type: "SET_DOCUMENTS",
         payload: {
           workspaceId,
-          documents:
-            documents?.map((document) => ({
-              ...document,
-              childDocuments:
-                state.workspaces
-                  .find((workspace) => workspace.id === workspaceId)
-                  ?.documents.find((doc) => doc.id === document.id)
-                  ?.childDocuments || [],
-            })) || [],
+          documents: documents || [],
         },
       });
     }
-  }, [documents, workspaceId]);
+  }, [documents, workspaceId, dispatch]);
 
-  useEffect(() => {
-    setDocumentsData(
-      state.workspaces.find((workspace) => workspace.id === workspaceId)
-        ?.documents || []
-    );
-  }, [state]);
+  const parentDocuments = useMemo(() => {
+    return documents
+      .filter((doc) => doc.workspaceId === workspaceId)
+      ?.filter((doc) => doc.parentId === null);
+  }, [documents, workspaceId]);
 
   return (
     <>
-      {documentsData.map((document) => (
+      {parentDocuments.map((document) => (
         <DocumentItem
           key={document.id}
           document={document}

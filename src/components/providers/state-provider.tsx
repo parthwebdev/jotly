@@ -8,11 +8,9 @@ import {
   useReducer,
 } from "react";
 import { SelectDocument, SelectWorkspace } from "@/lib/supabase/schema";
+import { getChildDocuments } from "@/lib/supabase/queries";
 
-export type Document = SelectDocument & {
-  childDocuments: SelectDocument[] | [];
-};
-export type Workspace = SelectWorkspace & { documents: Document[] | [] };
+export type Workspace = SelectWorkspace & { documents: SelectDocument[] | [] };
 
 interface AppState {
   workspaces: Workspace[] | [];
@@ -21,19 +19,14 @@ interface AppState {
 type Action =
   | { type: "SET_WORKSPACES"; payload: { workspaces: Workspace[] } }
   | {
-      type: "ADD_DOCUMENT";
-      payload: { workspaceId: string; document: Document };
-    }
-  | {
       type: "SET_DOCUMENTS";
-      payload: { workspaceId: string; documents: Document[] };
+      payload: { workspaceId: string; documents: SelectDocument[] };
     }
   | {
-      type: "SET_CHILD_DOCUMENTS";
+      type: "ADD_DOCUMENT";
       payload: {
         workspaceId: string;
-        documentId: string;
-        documents: Document[];
+        document: SelectDocument;
       };
     };
 
@@ -51,6 +44,7 @@ const appReducer = (
         ...state,
         workspaces: action.payload.workspaces,
       };
+
     case "SET_DOCUMENTS":
       return {
         ...state,
@@ -58,7 +52,7 @@ const appReducer = (
           if (workspace.id === action.payload.workspaceId) {
             return {
               ...workspace,
-              documents: action.payload.documents,
+              documents: [...workspace.documents, ...action.payload.documents],
             };
           }
           return workspace;
@@ -79,28 +73,6 @@ const appReducer = (
         }),
       };
 
-    case "SET_CHILD_DOCUMENTS":
-      return {
-        ...state,
-        workspaces: state.workspaces.map((workspace) => {
-          if (workspace.id === action.payload.workspaceId) {
-            return {
-              ...workspace,
-              documents: workspace.documents.map((document) => {
-                if (document.id === action.payload.documentId) {
-                  return {
-                    ...document,
-                    childDocuments: action.payload.documents,
-                  };
-                }
-                return document;
-              }),
-            };
-          }
-
-          return workspace;
-        }),
-      };
     default:
       return initialState;
   }
