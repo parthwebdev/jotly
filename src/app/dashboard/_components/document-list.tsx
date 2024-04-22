@@ -14,9 +14,8 @@ interface DocumentListProps {
 }
 
 const DocumentList = ({ documents = [], workspaceId }: DocumentListProps) => {
-  useSupabaseRealtime(); // Listen to Realtime Database changes using supabase
-
-  const { dispatch } = useAppState();
+  // useSupabaseRealtime(); // Listen to Realtime Database changes using supabase
+  const { state, dispatch } = useAppState();
 
   useEffect(() => {
     if (documents?.length > 0) {
@@ -31,14 +30,15 @@ const DocumentList = ({ documents = [], workspaceId }: DocumentListProps) => {
   }, [documents, workspaceId, dispatch]);
 
   const parentDocuments = useMemo(() => {
-    return documents
-      .filter((doc) => doc.workspaceId === workspaceId)
+    return state.workspaces
+      .find((workspace) => workspace.id === workspaceId)
+      ?.documents.filter((doc) => doc.workspaceId === workspaceId)
       ?.filter((doc) => doc.parentId === null);
-  }, [documents, workspaceId]);
+  }, [workspaceId, state.workspaces]);
 
   return (
     <>
-      {parentDocuments.map((document) => (
+      {parentDocuments?.map((document) => (
         <DocumentItem
           key={document.id}
           document={document}

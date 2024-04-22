@@ -40,19 +40,19 @@ export const getDocuments = async (workspaceId: string) => {
   }
 };
 
-export const getChildDocuments = async (parentId: string) => {
-  try {
-    const data = (await db
-      .select()
-      .from(documents)
-      .where(eq(documents.parentId, parentId))) as SelectDocument[] | [];
+// export const getChildDocuments = async (parentId: string) => {
+//   try {
+//     const data = (await db
+//       .select()
+//       .from(documents)
+//       .where(eq(documents.parentId, parentId))) as SelectDocument[] | [];
 
-    return { data, error: null };
-  } catch (error) {
-    console.log("🔴 Error: ", error);
-    return { data: [], error };
-  }
-};
+//     return { data, error: null };
+//   } catch (error) {
+//     console.log("🔴 Error: ", error);
+//     return { data: [], error };
+//   }
+// };
 
 export const createDocument = async (
   document: InsertDocument,

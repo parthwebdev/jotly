@@ -8,7 +8,6 @@ import {
   useReducer,
 } from "react";
 import { SelectDocument, SelectWorkspace } from "@/lib/supabase/schema";
-import { getChildDocuments } from "@/lib/supabase/queries";
 
 export type Workspace = SelectWorkspace & { documents: SelectDocument[] | [] };
 
@@ -52,7 +51,7 @@ const appReducer = (
           if (workspace.id === action.payload.workspaceId) {
             return {
               ...workspace,
-              documents: [...workspace.documents, ...action.payload.documents],
+              documents: [...action.payload.documents],
             };
           }
           return workspace;
