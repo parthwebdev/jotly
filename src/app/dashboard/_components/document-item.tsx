@@ -2,13 +2,13 @@
 
 import { useMemo, useState } from "react";
 
-import { ChevronDown, ChevronRight, Plus } from "lucide-react";
+import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { v4 } from "uuid";
 
 import { SelectDocument } from "@/lib/supabase/schema";
 import { Skeleton } from "@/components/ui/skeleton";
-import { createDocument } from "@/lib/supabase/queries";
+import { createDocument, deleteDocument } from "@/lib/supabase/queries";
 import { useAppState } from "@/components/providers/state-provider";
 
 interface DocumentItemProps {
@@ -65,6 +65,15 @@ const DocumentItem = ({
     else toast.success("New document created!");
   };
 
+  const handleDelete = async (documentId: string) => {
+    const { error } = await deleteDocument(documentId);
+
+    dispatch({ type: "DELETE_DOCUMENT", payload: { documentId, workspaceId } });
+
+    if (error) toast.error("Cannot delete document.");
+    else toast.success("Document successfully deleted!");
+  };
+
   return (
     <>
       <div
@@ -73,7 +82,7 @@ const DocumentItem = ({
         style={{
           paddingLeft: level ? `${level * 12 + 12}px` : "12px",
         }}
-        className="py-1 pr-3 flex items-center hover:bg-primary/10"
+        className="py-1 pr-3 flex items-center hover:bg-primary/10 group"
       >
         <div
           role="button"
@@ -90,12 +99,21 @@ const DocumentItem = ({
         <div className="mr-2">{document.icon}</div>
         <span className="text-muted-foreground">{document.title}</span>
 
-        <div
-          role="button"
-          className="h-full p-[1px] ml-auto rounded-sm hover:bg-muted mr-1"
-          onClick={() => handleCreate(document.id)}
-        >
-          <Plus className="size-4 text-muted-foreground" />
+        <div className="ml-auto flex gap-1">
+          <div
+            role="button"
+            className="h-full p-[1px] ml-auto rounded-sm hover:bg-muted mr-1 opacity-0 group-hover:opacity-100 transition"
+            onClick={() => handleDelete(document.id)}
+          >
+            <Trash2 className="size-4 text-muted-foreground/100" />
+          </div>
+          <div
+            role="button"
+            className="h-full p-[1px] rounded-sm hover:bg-muted mr-1"
+            onClick={() => handleCreate(document.id)}
+          >
+            <Plus className="size-4 text-muted-foreground/80 hover:text-muted-foreground/100" />
+          </div>
         </div>
       </div>
       {isExpanded[document.id] ? (

@@ -27,6 +27,13 @@ type Action =
         workspaceId: string;
         document: SelectDocument;
       };
+    }
+  | {
+      type: "DELETE_DOCUMENT";
+      payload: {
+        workspaceId: string;
+        documentId: string;
+      };
     };
 
 const initialState: AppState = {
@@ -68,6 +75,23 @@ const appReducer = (
               documents: [...workspace.documents, action.payload.document],
             };
           }
+          return workspace;
+        }),
+      };
+
+    case "DELETE_DOCUMENT":
+      return {
+        ...state,
+        workspaces: state.workspaces.map((workspace) => {
+          if (workspace.id === action.payload.workspaceId) {
+            return {
+              ...workspace,
+              documents: workspace.documents.filter(
+                (doc) => doc.id !== action.payload.documentId
+              ),
+            };
+          }
+
           return workspace;
         }),
       };

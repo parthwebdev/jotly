@@ -1,15 +1,9 @@
 "use server";
 
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 import db from "./db";
-import {
-  InsertDocument,
-  SelectDocument,
-  documents,
-  workspaces,
-} from "./schema";
-import { revalidatePath } from "next/cache";
+import { InsertDocument, documents, workspaces } from "./schema";
 
 export const getWorkspaces = async (userId: string) => {
   try {
@@ -31,7 +25,6 @@ export const getDocuments = async (workspaceId: string) => {
       .select()
       .from(documents)
       .where(and(eq(documents.workspaceId, workspaceId)));
-    console.log(data);
 
     return { data, error: null };
   } catch (error) {
@@ -39,20 +32,6 @@ export const getDocuments = async (workspaceId: string) => {
     return { data: [], error };
   }
 };
-
-// export const getChildDocuments = async (parentId: string) => {
-//   try {
-//     const data = (await db
-//       .select()
-//       .from(documents)
-//       .where(eq(documents.parentId, parentId))) as SelectDocument[] | [];
-
-//     return { data, error: null };
-//   } catch (error) {
-//     console.log("🔴 Error: ", error);
-//     return { data: [], error };
-//   }
-// };
 
 export const createDocument = async (
   document: InsertDocument,
@@ -67,6 +46,17 @@ export const createDocument = async (
     return { data: null, error: null };
   } catch (error) {
     console.log("🔴 Error:", error);
-    return { data: [], error };
+    return { data: null, error };
+  }
+};
+
+export const deleteDocument = async (documentId: string) => {
+  try {
+    await db.delete(documents).where(eq(documents.id, documentId));
+
+    return { data: null, error: null };
+  } catch (error) {
+    console.log("🔴 Error:", error);
+    return { data: null, error };
   }
 };

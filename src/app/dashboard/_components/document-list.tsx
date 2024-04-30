@@ -16,6 +16,7 @@ interface DocumentListProps {
 const DocumentList = ({ documents = [], workspaceId }: DocumentListProps) => {
   // useSupabaseRealtime(); // Listen to Realtime Database changes using supabase
   const { state, dispatch } = useAppState();
+  // console.log(documents);
 
   useEffect(() => {
     if (documents?.length > 0) {
