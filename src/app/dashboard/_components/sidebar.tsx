@@ -28,7 +28,6 @@ const Sidebar = async ({ params }: { params: { workspaceId: string } }) => {
   const { data: documents, error: documentsError } = await getDocuments(
     params.workspaceId
   );
-  console.log(documents);
 
   if (documentsError || workspaceError) return;
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { MouseEvent, useMemo, useState } from "react";
 
 import { ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -10,6 +10,7 @@ import { SelectDocument } from "@/lib/supabase/schema";
 import { Skeleton } from "@/components/ui/skeleton";
 import { createDocument, deleteDocument } from "@/lib/supabase/queries";
 import { useAppState } from "@/components/providers/state-provider";
+import { useRouter } from "next/navigation";
 
 interface DocumentItemProps {
   document: SelectDocument;
@@ -24,6 +25,7 @@ const DocumentItem = ({
 }: DocumentItemProps) => {
   const [isExpanded, setIsExpanded] = useState<Record<string, boolean>>({});
   const { state, dispatch } = useAppState();
+  const router = useRouter();
 
   const childDocuments = useMemo(() => {
     return state.workspaces
@@ -38,7 +40,12 @@ const DocumentItem = ({
     }));
   };
 
-  const handleCreate = async (documentId: string) => {
+  const handleCreate = async (
+    event: MouseEvent<HTMLDivElement>,
+    documentId: string
+  ) => {
+    event.stopPropagation();
+
     const newDocument: SelectDocument = {
       id: v4(),
       workspaceId,
@@ -65,7 +72,12 @@ const DocumentItem = ({
     else toast.success("New document created!");
   };
 
-  const handleDelete = async (documentId: string) => {
+  const handleDelete = async (
+    event: MouseEvent<HTMLDivElement>,
+    documentId: string
+  ) => {
+    event.stopPropagation();
+
     const { error } = await deleteDocument(documentId);
 
     dispatch({ type: "DELETE_DOCUMENT", payload: { documentId, workspaceId } });
@@ -74,11 +86,20 @@ const DocumentItem = ({
     else toast.success("Document successfully deleted!");
   };
 
+  const navigatePage = (
+    event: MouseEvent<HTMLDivElement>,
+    documentId: string
+  ) => {
+    event.stopPropagation();
+    router.push(`/dashboard/${workspaceId}/${documentId}`);
+  };
+
   return (
     <>
       <div
         key={document.id}
         role="button"
+        onClick={(event) => navigatePage(event, document.id)}
         style={{
           paddingLeft: level ? `${level * 12 + 12}px` : "12px",
         }}
@@ -103,14 +124,14 @@ const DocumentItem = ({
           <div
             role="button"
             className="h-full p-[1px] ml-auto rounded-sm hover:bg-muted mr-1 opacity-0 group-hover:opacity-100 transition"
-            onClick={() => handleDelete(document.id)}
+            onClick={(event) => handleDelete(event, document.id)}
           >
             <Trash2 className="size-4 text-muted-foreground/100" />
           </div>
           <div
             role="button"
             className="h-full p-[1px] rounded-sm hover:bg-muted mr-1"
-            onClick={() => handleCreate(document.id)}
+            onClick={(event) => handleCreate(event, document.id)}
           >
             <Plus className="size-4 text-muted-foreground/80 hover:text-muted-foreground/100" />
           </div>

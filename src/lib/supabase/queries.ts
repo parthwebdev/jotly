@@ -1,9 +1,15 @@
 "use server";
 
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
 import db from "./db";
-import { InsertDocument, documents, workspaces } from "./schema";
+import {
+  InsertDocument,
+  SelectDocument,
+  documents,
+  workspaces,
+} from "./schema";
+import { validate } from "uuid";
 
 export const getWorkspaces = async (userId: string) => {
   try {
@@ -24,9 +30,35 @@ export const getDocuments = async (workspaceId: string) => {
     const data = await db
       .select()
       .from(documents)
-      .where(and(eq(documents.workspaceId, workspaceId)));
+      .where(eq(documents.workspaceId, workspaceId));
 
     return { data, error: null };
+  } catch (error) {
+    console.log("🔴 Error: ", error);
+    return { data: [], error };
+  }
+};
+
+export const getDocument = async (documentId: string) => {
+  const isValid = validate(documentId);
+
+  if (!isValid)
+    return {
+      data: [],
+      error: "Error",
+    };
+
+  try {
+    const data: SelectDocument[] = await db
+      .select()
+      .from(documents)
+      .where(eq(documents.id, documentId))
+      .limit(1);
+
+    return {
+      data,
+      error: null,
+    };
   } catch (error) {
     console.log("🔴 Error: ", error);
     return { data: [], error };
