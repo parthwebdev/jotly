@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import { ChevronsLeftRight, PlusIcon } from "lucide-react";
 
@@ -23,7 +23,6 @@ const WorkspaceDropdown = ({
   workspaces: SelectWorkspace[];
   defaultValue: SelectWorkspace | undefined;
 }) => {
-  const [selectedOption, setSelectedOption] = useState(defaultValue);
   const { state, dispatch } = useAppState();
   const router = useRouter();
 
@@ -59,12 +58,12 @@ const WorkspaceDropdown = ({
           className="flex items-center text-sm p-2 w-full hover:bg-primary/5 border rounded-md"
         >
           <div className="gap-x-2 flex flex-1 items-center">
-            {selectedOption ? (
+            {defaultValue ? (
               <>
-                <span className="h-5 w-5">{selectedOption.icon}</span>
+                <span className="h-5 w-5">{defaultValue.icon}</span>
 
                 <span className="text-start font-medium line-clamp-1">
-                  {selectedOption.title}
+                  {defaultValue.title}
                 </span>
               </>
             ) : (
@@ -87,7 +86,6 @@ const WorkspaceDropdown = ({
           <DropdownMenuItem key={workspace.id} className="cursor-pointer">
             <button
               onClick={() => {
-                setSelectedOption(workspace);
                 router.push(`/dashboard/${workspace.id}`);
                 router.refresh();
               }}

@@ -33,7 +33,9 @@ const DocumentItem = ({
       ?.documents.filter((doc) => doc.parentId === document.id);
   }, [document.id, workspaceId, state.workspaces]);
 
-  const onExpand = (docuemntId: string) => {
+  const onExpand = (event: MouseEvent<HTMLDivElement>, docuemntId: string) => {
+    event.stopPropagation();
+
     setIsExpanded((prev) => ({
       ...prev,
       [docuemntId]: !prev[docuemntId],
@@ -108,7 +110,7 @@ const DocumentItem = ({
         <div
           role="button"
           className="h-full rounded-sm hover:bg-muted mr-1"
-          onClick={() => onExpand(document.id)}
+          onClick={(event) => onExpand(event, document.id)}
         >
           {isExpanded[document.id] ? (
             <ChevronDown className="size-[18px] text-muted-foreground/60" />
