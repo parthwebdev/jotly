@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SelectWorkspace } from "@/lib/supabase/schema";
 import { useAppState } from "@/components/providers/state-provider";
+import { useRouter } from "next/navigation";
 
 const WorkspaceDropdown = ({
   workspaces,
@@ -22,8 +23,9 @@ const WorkspaceDropdown = ({
   workspaces: SelectWorkspace[];
   defaultValue: SelectWorkspace | undefined;
 }) => {
-  // const [selectedWorkspace, setSelectedWorkspace] = useState(defaultValue);
+  const [selectedOption, setSelectedOption] = useState(defaultValue);
   const { state, dispatch } = useAppState();
+  const router = useRouter();
 
   useEffect(() => {
     if (!state.workspaces.length) {
@@ -37,7 +39,17 @@ const WorkspaceDropdown = ({
         },
       });
     }
-  }, [workspaces, dispatch]);
+  }, [workspaces, dispatch, state.workspaces.length]);
+
+  // useEffect(() => {
+  //   const findSelectedWorkspace = state.workspaces.find(
+  //     (workspace) => workspace.id === defaultValue?.id
+  //   );
+  //   if (findSelectedWorkspace) {
+  //     console.log("Finding");
+  //     setSelectedOption(findSelectedWorkspace);
+  //   }
+  // }, [state, defaultValue]);
 
   return (
     <DropdownMenu>
@@ -47,12 +59,12 @@ const WorkspaceDropdown = ({
           className="flex items-center text-sm p-2 w-full hover:bg-primary/5 border rounded-md"
         >
           <div className="gap-x-2 flex flex-1 items-center">
-            {defaultValue ? (
+            {selectedOption ? (
               <>
-                <span className="h-5 w-5">{defaultValue.icon}</span>
+                <span className="h-5 w-5">{selectedOption.icon}</span>
 
                 <span className="text-start font-medium line-clamp-1">
-                  {defaultValue.title}
+                  {selectedOption.title}
                 </span>
               </>
             ) : (
@@ -73,13 +85,17 @@ const WorkspaceDropdown = ({
         <DropdownMenuSeparator />
         {workspaces.map((workspace) => (
           <DropdownMenuItem key={workspace.id} className="cursor-pointer">
-            <Link
-              href={`/dashboard/${workspace.id}`}
+            <button
+              onClick={() => {
+                setSelectedOption(workspace);
+                router.push(`/dashboard/${workspace.id}`);
+                router.refresh();
+              }}
               className="flex gap-2 items-center"
             >
               <span>{workspace.icon}</span>
               <p>{workspace.title}</p>
-            </Link>
+            </button>
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>
