@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import Editor from "@/components/editor";
-import { getDocument } from "@/lib/supabase/queries";
+import { getDocument, updateDocument } from "@/lib/supabase/queries";
 import { redirect } from "next/navigation";
 
 const Page = async ({
@@ -17,7 +17,14 @@ const Page = async ({
     redirect("/dashboard");
   }
 
-  return <Editor initialContent={document[0].data || ""} />;
+  return (
+    <div className="md:max-w-3xl lg:max-w-4xl mx-auto h-full">
+      <Editor
+        initialContent={document[0].data || ""}
+        documentId={params.documentId}
+      />
+    </div>
+  );
 };
 
 export default Page;

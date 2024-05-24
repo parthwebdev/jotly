@@ -92,3 +92,17 @@ export const deleteDocument = async (documentId: string) => {
     return { data: null, error };
   }
 };
+
+export const updateDocument = async (
+  documentId: string,
+  content: Partial<InsertDocument>
+) => {
+  try {
+    console.log(content);
+    await db.update(documents).set(content).where(eq(documents.id, documentId));
+    return { data: null, error: null };
+  } catch (error) {
+    console.log(error);
+    return { data: null, error: "Error" };
+  }
+};

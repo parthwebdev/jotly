@@ -9,12 +9,14 @@ const Layout = ({
   params: { workspaceId: string };
 }) => {
   return (
-    <div className="flex">
+    <div className="h-full flex">
       <Sidebar params={params} />
 
-      <div className="flex flex-col">
+      <div className="flex flex-col flex-1">
         <Navbar />
-        <main>{children}</main>
+        <main className="h-full overflow-y-scroll no-scrollbar">
+          {children}
+        </main>
       </div>
     </div>
   );

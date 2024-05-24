@@ -1,22 +1,37 @@
 "use client";
 
-import { BlockNoteEditor, PartialBlock } from "@blocknote/core";
-import { BlockNoteView, useCreateBlockNote } from "@blocknote/react";
-import "@blocknote/react/style.css";
+import { type BlockNoteEditor, type PartialBlock } from "@blocknote/core";
+import { useCreateBlockNote, BlockNoteView } from "@blocknote/react";
+import "@blocknote/core/fonts/inter.css";
+import "@blocknote/mantine/style.css";
+import { updateDocument } from "@/lib/supabase/queries";
 
 type EditorProps = {
   initialContent: string;
-  // onChange: () => void;
+  documentId: string;
+  // onChange: (content: string) => void;
 };
 
-const Editor = ({ initialContent }: EditorProps) => {
+const Editor = ({ initialContent, documentId }: EditorProps) => {
   const editor: BlockNoteEditor = useCreateBlockNote({
     initialContent: initialContent
       ? (JSON.parse(initialContent) as PartialBlock[])
       : undefined,
   });
 
-  return <BlockNoteView editor={editor} editable theme="dark" />;
+  const onChange = async (content: string) => {
+    await updateDocument(documentId, { data: content });
+  };
+
+  return (
+    <BlockNoteView
+      editor={editor}
+      editable
+      theme="dark"
+      data-theming
+      onChange={() => onChange(JSON.stringify(editor.document))}
+    />
+  );
 };
 
 export default Editor;
