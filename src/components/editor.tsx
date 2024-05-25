@@ -4,6 +4,7 @@ import { type BlockNoteEditor, type PartialBlock } from "@blocknote/core";
 import { useCreateBlockNote, BlockNoteView } from "@blocknote/react";
 import "@blocknote/core/fonts/inter.css";
 import "@blocknote/mantine/style.css";
+
 import { updateDocument } from "@/lib/supabase/queries";
 
 type EditorProps = {

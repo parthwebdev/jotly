@@ -98,7 +98,6 @@ export const updateDocument = async (
   content: Partial<InsertDocument>
 ) => {
   try {
-    console.log(content);
     await db.update(documents).set(content).where(eq(documents.id, documentId));
     return { data: null, error: null };
   } catch (error) {

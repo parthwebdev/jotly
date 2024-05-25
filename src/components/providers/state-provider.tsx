@@ -7,7 +7,11 @@ import {
   useEffect,
   useReducer,
 } from "react";
-import { SelectDocument, SelectWorkspace } from "@/lib/supabase/schema";
+import {
+  InsertDocument,
+  SelectDocument,
+  SelectWorkspace,
+} from "@/lib/supabase/schema";
 
 export type Workspace = SelectWorkspace & { documents: SelectDocument[] | [] };
 
@@ -26,6 +30,14 @@ type Action =
       payload: {
         workspaceId: string;
         document: SelectDocument;
+      };
+    }
+  | {
+      type: "UPDATE_DOCUMENT";
+      payload: {
+        workspaceId: string;
+        documentId: string;
+        document: Partial<InsertDocument>;
       };
     }
   | {
@@ -73,6 +85,28 @@ const appReducer = (
             return {
               ...workspace,
               documents: [...workspace.documents, action.payload.document],
+            };
+          }
+          return workspace;
+        }),
+      };
+
+    case "UPDATE_DOCUMENT":
+      return {
+        ...state,
+        workspaces: state.workspaces.map((workspace) => {
+          if (workspace.id === action.payload.workspaceId) {
+            return {
+              ...workspace,
+              documents: workspace.documents.map((document) => {
+                if (document.id === action.payload.documentId) {
+                  return {
+                    ...document,
+                    ...action.payload.document,
+                  };
+                }
+                return document;
+              }),
             };
           }
           return workspace;
