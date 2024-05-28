@@ -30,6 +30,7 @@ export const getDocuments = async (workspaceId: string) => {
     const data = await db
       .select()
       .from(documents)
+      .orderBy(documents.createdAt)
       .where(eq(documents.workspaceId, workspaceId));
 
     return { data, error: null };
@@ -101,7 +102,7 @@ export const updateDocument = async (
     await db.update(documents).set(content).where(eq(documents.id, documentId));
     return { data: null, error: null };
   } catch (error) {
-    console.log(error);
+    console.log("🔴 Error:", error);
     return { data: null, error: "Error" };
   }
 };

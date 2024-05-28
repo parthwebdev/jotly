@@ -8,10 +8,15 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { SelectDocument } from "@/lib/supabase/schema";
 import IconPicker from "./icon-picker";
 import { Button } from "./ui/button";
+import { updateDocument } from "@/lib/supabase/queries";
+import { useAppState } from "./providers/state-provider";
+import { useParams } from "next/navigation";
 
 const Toolbar = ({ initialData }: { initialData: SelectDocument }) => {
-  const bannerInputRef = useRef<HTMLInputElement>(null);
   const supabase = createClientComponentClient();
+  const { dispatch } = useAppState();
+  const { workspaceId } = useParams();
+  const bannerInputRef = useRef<HTMLInputElement>(null);
 
   const uploadBanner = async () => {
     bannerInputRef.current?.click();
@@ -26,14 +31,25 @@ const Toolbar = ({ initialData }: { initialData: SelectDocument }) => {
 
     const { data, error } = await supabase.storage
       .from("banners")
-      .upload(`banner-${initialData.id}`, file, {
-        cacheControl: "5",
+      .upload(`banner-${initialData.id}?bust=${Date.now()}`, file, {
+        cacheControl: "0",
         upsert: true,
       });
 
     if (error) throw new Error(error.message);
 
     filePath = data.path;
+
+    dispatch({
+      type: "UPDATE_DOCUMENT",
+      payload: {
+        workspaceId: workspaceId as string,
+        documentId: initialData.id,
+        document: { banner: filePath },
+      },
+    });
+
+    await updateDocument(initialData.id, { banner: filePath });
   };
 
   return (

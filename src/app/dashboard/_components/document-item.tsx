@@ -94,6 +94,7 @@ const DocumentItem = ({
   ) => {
     event.stopPropagation();
     router.push(`/dashboard/${workspaceId}/${documentId}`);
+    router.refresh();
   };
 
   return (

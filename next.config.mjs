@@ -5,6 +5,9 @@ const nextConfig = {
   //     fullUrl: true,
   //   },
   // },
+  images: {
+    domains: ["hcvtywdctockggthogby.supabase.co"],
+  },
 };
 
 export default nextConfig;

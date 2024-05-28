@@ -6,6 +6,8 @@ import "@blocknote/core/fonts/inter.css";
 import "@blocknote/mantine/style.css";
 
 import { updateDocument } from "@/lib/supabase/queries";
+import { useAppState } from "./providers/state-provider";
+import { useParams } from "next/navigation";
 
 type EditorProps = {
   initialContent: string;
@@ -14,6 +16,9 @@ type EditorProps = {
 };
 
 const Editor = ({ initialContent, documentId }: EditorProps) => {
+  const { dispatch } = useAppState();
+  const { workspaceId } = useParams();
+
   const editor: BlockNoteEditor = useCreateBlockNote({
     initialContent: initialContent
       ? (JSON.parse(initialContent) as PartialBlock[])
@@ -21,7 +26,18 @@ const Editor = ({ initialContent, documentId }: EditorProps) => {
   });
 
   const onChange = async (content: string) => {
+    // update server state
     await updateDocument(documentId, { data: content });
+
+    // Update local state
+    // dispatch({
+    //   type: "UPDATE_DOCUMENT",
+    //   payload: {
+    //     workspaceId: workspaceId as string,
+    //     documentId,
+    //     document: { data: content },
+    //   },
+    // });
   };
 
   return (

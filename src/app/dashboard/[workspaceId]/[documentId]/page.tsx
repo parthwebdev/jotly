@@ -11,6 +11,7 @@ const Page = async ({
   params,
 }: {
   params: {
+    workspaceId: string;
     documentId: string;
   };
 }) => {
@@ -22,7 +23,7 @@ const Page = async ({
 
   return (
     <div>
-      <Banner />
+      <Banner workspaceId={params.workspaceId} documentId={document[0].id} />
       <div className="md:max-w-3xl lg:max-w-4xl mx-auto h-full">
         <Toolbar initialData={document[0]} />
         <Editor
