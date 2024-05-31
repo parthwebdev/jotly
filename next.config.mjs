@@ -6,7 +6,13 @@ const nextConfig = {
   //   },
   // },
   images: {
-    domains: ["hcvtywdctockggthogby.supabase.co"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "hcvtywdctockggthogby.supabase.co",
+        port: "",
+      },
+    ],
   },
 };
 

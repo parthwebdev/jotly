@@ -22,23 +22,24 @@ const Banner = ({ workspaceId, documentId }: BannerProps) => {
       ?.documents.find((document) => document.id === documentId)?.banner;
   }, [documentId, workspaceId, state.workspaces]);
 
-  if (!path) return;
-
-  const {
-    data: { publicUrl: url },
-  } = supabase.storage.from("banners").getPublicUrl(path);
-  console.log(url);
-
   return (
     <div
       className={cn(
-        "w-full h-[30vh] relative",
-        url && "bg-muted",
-        !url && "h-[25vh]"
+        "w-full h-[35vh] relative",
+        path && "bg-muted",
+        !path && "h-[20vh]"
       )}
     >
-      {!!url ? (
-        <Image src={url} fill priority alt="Cover" className="object-cover" />
+      {!!path ? (
+        <Image
+          src={
+            supabase.storage.from("banners").getPublicUrl(path).data.publicUrl
+          }
+          fill
+          priority
+          alt="Cover"
+          className="object-cover"
+        />
       ) : (
         <div className="w-full h-full bg-muted"></div>
       )}
