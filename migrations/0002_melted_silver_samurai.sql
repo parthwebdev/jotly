@@ -1,0 +1,1 @@
+ALTER TABLE "documents" ALTER COLUMN "in_trash" SET NOT NULL;

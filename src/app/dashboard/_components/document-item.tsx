@@ -8,7 +8,11 @@ import { v4 } from "uuid";
 
 import { SelectDocument } from "@/lib/supabase/schema";
 import { Skeleton } from "@/components/ui/skeleton";
-import { createDocument, deleteDocument } from "@/lib/supabase/queries";
+import {
+  createDocument,
+  deleteDocument,
+  updateDocument,
+} from "@/lib/supabase/queries";
 import { useAppState } from "@/components/providers/state-provider";
 import { useRouter } from "next/navigation";
 
@@ -55,7 +59,7 @@ const DocumentItem = ({
       icon: "📄",
       data: null,
       banner: null,
-      inTrash: null,
+      inTrash: false,
       createdAt: new Date().toISOString(),
       parentId: document.id,
     };
@@ -80,9 +84,15 @@ const DocumentItem = ({
   ) => {
     event.stopPropagation();
 
-    const { error } = await deleteDocument(documentId);
+    // const { error } = await deleteDocument(documentId);
 
-    dispatch({ type: "DELETE_DOCUMENT", payload: { documentId, workspaceId } });
+    // dispatch({ type: "DELETE_DOCUMENT", payload: { documentId, workspaceId } });
+    const { error } = await updateDocument(documentId, { inTrash: true });
+
+    dispatch({
+      type: "UPDATE_DOCUMENT",
+      payload: { workspaceId, documentId, document: { inTrash: true } },
+    });
 
     if (error) toast.error("Cannot delete document.");
     else toast.success("Document successfully deleted!");

@@ -1,5 +1,6 @@
 import {
   AnyPgColumn,
+  boolean,
   pgTable,
   text,
   timestamp,
@@ -31,7 +32,7 @@ export const documents = pgTable("documents", {
   data: text("data"),
   icon: text("icon").notNull(),
   banner: text("banner"),
-  inTrash: text("in_trash"),
+  inTrash: boolean("in_trash").default(false).notNull(),
   createdAt: timestamp("created_at", {
     withTimezone: true,
     mode: "string",

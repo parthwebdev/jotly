@@ -18,7 +18,7 @@ const CreateDocument = ({ workspaceId }: { workspaceId: string }) => {
       icon: "📄",
       data: null,
       banner: null,
-      inTrash: null,
+      inTrash: false,
       createdAt: new Date().toISOString(),
       parentId: null,
     };

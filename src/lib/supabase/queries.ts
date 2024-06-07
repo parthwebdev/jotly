@@ -1,6 +1,6 @@
 "use server";
 
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 import db from "./db";
 import {
@@ -31,7 +31,12 @@ export const getDocuments = async (workspaceId: string) => {
       .select()
       .from(documents)
       .orderBy(documents.createdAt)
-      .where(eq(documents.workspaceId, workspaceId));
+      .where(
+        and(
+          eq(documents.workspaceId, workspaceId),
+          eq(documents.inTrash, false)
+        )
+      );
 
     return { data, error: null };
   } catch (error) {
