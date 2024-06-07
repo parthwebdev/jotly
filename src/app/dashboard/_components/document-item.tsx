@@ -34,7 +34,9 @@ const DocumentItem = ({
   const childDocuments = useMemo(() => {
     return state.workspaces
       .find((workspace) => workspace.id === workspaceId)
-      ?.documents.filter((doc) => doc.parentId === document.id);
+      ?.documents.filter(
+        (doc) => doc.parentId === document.id && doc.inTrash === false
+      );
   }, [document.id, workspaceId, state.workspaces]);
 
   const onExpand = (event: MouseEvent<HTMLDivElement>, docuemntId: string) => {
@@ -84,9 +86,6 @@ const DocumentItem = ({
   ) => {
     event.stopPropagation();
 
-    // const { error } = await deleteDocument(documentId);
-
-    // dispatch({ type: "DELETE_DOCUMENT", payload: { documentId, workspaceId } });
     const { error } = await updateDocument(documentId, { inTrash: true });
 
     dispatch({
@@ -94,8 +93,8 @@ const DocumentItem = ({
       payload: { workspaceId, documentId, document: { inTrash: true } },
     });
 
-    if (error) toast.error("Cannot delete document.");
-    else toast.success("Document successfully deleted!");
+    if (error) toast.error("Failed to archive document.");
+    else toast.success("Document moved to Trash!");
   };
 
   const navigatePage = (

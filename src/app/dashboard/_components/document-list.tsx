@@ -34,7 +34,7 @@ const DocumentList = ({ documents = [], workspaceId }: DocumentListProps) => {
     return state.workspaces
       .find((workspace) => workspace.id === workspaceId)
       ?.documents.filter((doc) => doc.workspaceId === workspaceId)
-      ?.filter((doc) => doc.parentId === null);
+      ?.filter((doc) => doc.parentId === null && doc.inTrash === false);
   }, [workspaceId, state.workspaces]);
 
   return (
