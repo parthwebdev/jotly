@@ -1,27 +1,29 @@
 "use client";
 
-import { ChangeEvent, useMemo, useRef } from "react";
+import { ChangeEvent, useMemo, useRef, useState } from "react";
+import { useParams } from "next/navigation";
 
 import { ImageIcon, Smile } from "lucide-react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { toast } from "sonner";
 
 import { SelectDocument } from "@/lib/supabase/schema";
 import IconPicker from "./icon-picker";
 import { Button } from "./ui/button";
 import { updateDocument } from "@/lib/supabase/queries";
 import { useAppState } from "./providers/state-provider";
-import { useParams } from "next/navigation";
 
 const Toolbar = ({ initialData }: { initialData: SelectDocument }) => {
+  const [isEditing, setIsEditing] = useState<boolean>(false);
   const supabase = createClientComponentClient();
   const { state, dispatch } = useAppState();
   const { workspaceId } = useParams();
   const bannerInputRef = useRef<HTMLInputElement>(null);
 
-  const icon = useMemo(() => {
+  const document = useMemo(() => {
     return state.workspaces
       .find((workspace) => workspace.id === workspaceId)
-      ?.documents.find((document) => document.id === initialData.id)?.icon;
+      ?.documents.find((document) => document.id === initialData.id);
   }, [workspaceId, state.workspaces, initialData.id]);
 
   const uploadBanner = async () => {
@@ -71,10 +73,38 @@ const Toolbar = ({ initialData }: { initialData: SelectDocument }) => {
     await updateDocument(initialData.id, { icon: emoji });
   };
 
+  const onTitleClick = () => {
+    setIsEditing(true);
+  };
+
+  const onTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    dispatch({
+      type: "UPDATE_DOCUMENT",
+      payload: {
+        workspaceId: workspaceId as string,
+        documentId: initialData.id,
+        document: { title: e.target.value },
+      },
+    });
+  };
+
+  const onBlur = async () => {
+    if (!isEditing) return;
+    setIsEditing(false);
+
+    const { error } = await updateDocument(initialData.id, {
+      title: document?.title,
+    });
+    if (error) {
+      toast.error("Cannot change document title");
+    }
+    toast.success("Successfully changed document title");
+  };
+
   return (
     <div className="px-[54px]">
       {/* Icon */}
-      {!!icon && <p className="text-6xl pt-6">{icon}</p>}
+      {!!document?.icon && <p className="text-6xl pt-6">{document?.icon}</p>}
 
       {/* Buttons for adding icon and banner */}
       <div className="flex items-center gap-x-1 py-4">
@@ -85,7 +115,7 @@ const Toolbar = ({ initialData }: { initialData: SelectDocument }) => {
             size="sm"
           >
             <Smile className="h-4 w-4 mr-2" />
-            {icon ? <span>Change icon</span> : <span>Add icon</span>}
+            {document?.icon ? <span>Change icon</span> : <span>Add icon</span>}
           </Button>
         </IconPicker>
         <Button
@@ -112,12 +142,21 @@ const Toolbar = ({ initialData }: { initialData: SelectDocument }) => {
       </div>
 
       {/* Title */}
-      <div
+      {/* <div
         // onClick={enableInput}
         className="pb-4 text-5xl font-bold break-words outline-none text-card-foreground"
       >
         {initialData.title}
-      </div>
+      </div> */}
+      <input
+        type="text"
+        value={document?.title}
+        readOnly={!isEditing}
+        onClick={onTitleClick}
+        onChange={onTitleChange}
+        onBlur={onBlur}
+        className="mb-4 outline-none bg-transparent text-card-foreground text-5xl font-bold"
+      />
     </div>
   );
 };

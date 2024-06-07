@@ -103,6 +103,6 @@ export const updateDocument = async (
     return { data: null, error: null };
   } catch (error) {
     console.log("🔴 Error:", error);
-    return { data: null, error: "Error" };
+    return { data: null, error };
   }
 };
