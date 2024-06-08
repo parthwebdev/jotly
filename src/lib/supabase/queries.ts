@@ -31,12 +31,7 @@ export const getDocuments = async (workspaceId: string) => {
       .select()
       .from(documents)
       .orderBy(documents.createdAt)
-      .where(
-        and(
-          eq(documents.workspaceId, workspaceId),
-          eq(documents.inTrash, false)
-        )
-      );
+      .where(eq(documents.workspaceId, workspaceId));
 
     return { data, error: null };
   } catch (error) {

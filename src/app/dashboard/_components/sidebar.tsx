@@ -2,13 +2,14 @@ import { cookies } from "next/headers";
 
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 
-import { Search, Settings } from "lucide-react";
+import { Search, Settings, Trash2 } from "lucide-react";
 
 import { getDocuments, getWorkspaces } from "@/lib/supabase/queries";
 import WorkspaceDropdown from "./workspace-dropdown";
 import SidebarItem from "./sidebar-item";
 import DocumentList from "./document-list";
 import CreateDocument from "./create-document";
+import Trash from "@/components/trash";
 
 const Sidebar = async ({ params }: { params: { workspaceId: string } }) => {
   const supabase = createServerComponentClient({ cookies });
@@ -50,6 +51,9 @@ const Sidebar = async ({ params }: { params: { workspaceId: string } }) => {
       <div>
         <SidebarItem icon={Search} label="Search" isSearch />
         <SidebarItem icon={Settings} label="Settings" />
+        <Trash workspaceId={params.workspaceId}>
+          <SidebarItem icon={Trash2} label="Trash" />
+        </Trash>
         <CreateDocument workspaceId={params.workspaceId} />
       </div>
 
