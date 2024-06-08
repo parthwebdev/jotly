@@ -56,25 +56,6 @@ const TrashBox = ({ workspaceId }: { workspaceId: string }) => {
           No Items in trash
         </div>
       )}
-      {/* {!!files.length && (
-        <>
-          <h3>Files</h3>
-          {files.map((file) => (
-            <Link
-              key={file.id}
-              className=" hover:bg-muted rounded-md p-2 flex items-center justify-between"
-              href={`/dashboard/${file.workspaceId}/${file.folderId}/${file.id}`}
-            >
-              <article>
-                <aside className="flex items-center gap-2">
-                  <FileIcon />
-                  {file.title}
-                </aside>
-              </article>
-            </Link>
-          ))}
-        </>
-      )} */}
     </section>
   );
 };

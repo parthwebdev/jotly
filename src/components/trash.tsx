@@ -5,7 +5,7 @@ const Trash = ({
   workspaceId,
   children,
 }: {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   workspaceId: string;
 }) => {
   return (

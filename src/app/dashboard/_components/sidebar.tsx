@@ -52,7 +52,16 @@ const Sidebar = async ({ params }: { params: { workspaceId: string } }) => {
         <SidebarItem icon={Search} label="Search" isSearch />
         <SidebarItem icon={Settings} label="Settings" />
         <Trash workspaceId={params.workspaceId}>
-          <SidebarItem icon={Trash2} label="Trash" />
+          <div
+            role="button"
+            className="
+              w-full py-1 px-4 flex items-center gap-2
+              text-muted-foreground text-sm hover:bg-secondary/60
+            "
+          >
+            <Trash2 className="size-4" />
+            <span>Trash</span>
+          </div>
         </Trash>
         <CreateDocument workspaceId={params.workspaceId} />
       </div>
