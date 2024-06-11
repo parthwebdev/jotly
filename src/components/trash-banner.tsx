@@ -1,11 +1,13 @@
 "use client";
 
-import { Button } from "./ui/button";
-import { deleteDocument } from "@/lib/supabase/queries";
-import { useAppState } from "./providers/state-provider";
-import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
+
+import { toast } from "sonner";
+
+import { useAppState } from "./providers/state-provider";
+import { deleteDocument, updateDocument } from "@/lib/supabase/queries";
+import { Button } from "./ui/button";
 
 const TrashBanner = ({
   workspaceId,
@@ -23,7 +25,19 @@ const TrashBanner = ({
       ?.documents.find((doc) => doc.id === documentId);
   }, [workspaceId, documentId, state.workspaces]);
 
-  const handleRestore = () => {};
+  const handleRestore = async () => {
+    dispatch({
+      type: "UPDATE_DOCUMENT",
+      payload: { workspaceId, documentId, document: { inTrash: false } },
+    });
+
+    const { error } = await updateDocument(documentId, { inTrash: false });
+
+    if (error) toast.error("Failed to restore document.");
+    else toast.success("Document Restored!");
+
+    router.replace(`/dashboard/${workspaceId}`);
+  };
 
   const handleDelete = async () => {
     const { error } = await deleteDocument(documentId);
