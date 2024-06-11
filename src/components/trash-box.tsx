@@ -2,12 +2,19 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { FolderIcon } from "lucide-react";
 
 import { useAppState } from "./providers/state-provider";
 
-const TrashBox = ({ workspaceId }: { workspaceId: string }) => {
+interface TrashBoxProps {
+  workspaceId: string;
+  onOpenChange?: () => void;
+}
+
+const TrashBox = ({ workspaceId, onOpenChange }: TrashBoxProps) => {
+  const router = useRouter();
   const { state } = useAppState();
 
   const documents = useMemo(() => {
@@ -21,14 +28,12 @@ const TrashBox = ({ workspaceId }: { workspaceId: string }) => {
       {!!documents?.length ? (
         <>
           {documents.map((document) => (
-            <Link
-              className="hover:bg-muted
-                rounded-md
-                p-2
-                flex
-                item-center
-                justify-between"
-              href={`/dashboard/${workspaceId}/${document?.id}`}
+            <button
+              className="hover:bg-muted rounded-md p-2 flex item-center justify-between w-full"
+              onClick={() => {
+                router.replace(`/dashboard/${workspaceId}/${document?.id}`);
+                onOpenChange?.();
+              }}
               key={document?.id}
             >
               <article>
@@ -37,7 +42,7 @@ const TrashBox = ({ workspaceId }: { workspaceId: string }) => {
                   {document?.title}
                 </aside>
               </article>
-            </Link>
+            </button>
           ))}
         </>
       ) : (

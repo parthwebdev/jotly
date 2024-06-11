@@ -150,7 +150,7 @@ const Toolbar = ({ initialData }: { initialData: SelectDocument }) => {
       </div> */}
       <input
         type="text"
-        value={document?.title}
+        value={document?.title || initialData.title}
         readOnly={!isEditing}
         onClick={onTitleClick}
         onChange={onTitleChange}
