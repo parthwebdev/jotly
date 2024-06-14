@@ -102,7 +102,7 @@ const Toolbar = ({ initialData }: { initialData: SelectDocument }) => {
   };
 
   return (
-    <div className="px-[54px]">
+    <div className="pl-[54px]">
       {/* Icon */}
       {!!document?.icon && <p className="text-6xl pt-6">{document?.icon}</p>}
 
@@ -155,7 +155,7 @@ const Toolbar = ({ initialData }: { initialData: SelectDocument }) => {
         onClick={onTitleClick}
         onChange={onTitleChange}
         onBlur={onBlur}
-        className="mb-4 outline-none bg-transparent text-card-foreground text-5xl font-bold"
+        className="w-full truncate mb-4 outline-none bg-transparent text-card-foreground text-5xl font-bold"
       />
     </div>
   );

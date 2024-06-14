@@ -6,13 +6,13 @@ const Layout = ({
   params,
 }: {
   children: React.ReactNode;
-  params: { workspaceId: string };
+  params: { workspaceId: string; documentId: string };
 }) => {
   return (
     <div className="h-full flex">
       <Sidebar params={params} />
 
-      <div className="flex flex-col flex-1">
+      <div className="w-full flex flex-col">
         <Navbar />
         <main className="h-full overflow-y-scroll no-scrollbar">
           {children}

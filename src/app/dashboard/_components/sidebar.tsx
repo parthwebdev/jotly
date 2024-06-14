@@ -33,7 +33,7 @@ const Sidebar = async ({ params }: { params: { workspaceId: string } }) => {
   if (documentsError || workspaceError) return;
 
   return (
-    <aside className="h-screen flex flex-col gap-5 py-5 w-[240px] border border-r-2">
+    <aside className="h-screen min-w-[240px] hidden lg:flex lg:flex-col gap-5 py-5 border border-r-2">
       {/* Workspace Dropdown */}
       <div className="px-4">
         <p className="text-sm text-muted-foreground mb-3">
