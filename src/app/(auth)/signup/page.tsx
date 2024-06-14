@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import Logo from "@/components/ui/logo";
+import Logo from "@/components/logo";
 import Loader from "@/components/loader";
 import { signUpUser } from "@/actions/auth";
 

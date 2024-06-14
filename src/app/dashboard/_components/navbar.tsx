@@ -5,10 +5,12 @@ import { useParams } from "next/navigation";
 import { useAppState } from "@/components/providers/state-provider";
 import { Button } from "@/components/ui/button";
 import { MenuIcon } from "lucide-react";
+import { useMobileContext } from "@/components/providers/mobile-provider";
 
 const Navbar = () => {
   const params = useParams();
   const { state } = useAppState();
+  const { setIsOpen } = useMobileContext();
 
   const document = useMemo(() => {
     return state.workspaces
@@ -20,7 +22,7 @@ const Navbar = () => {
     <nav className="px-3 py-2 w-full flex items-center">
       <MenuIcon
         role="button"
-        // onClick={}
+        onClick={() => setIsOpen(true)}
         className="hidden max-lg:block h-6 w-6 text-muted-foreground mr-1"
       />
       <div className="flex items-center justify-between w-full">

@@ -5,7 +5,7 @@ import Image from "next/image";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { ArrowRight } from "lucide-react";
 
-import Logo from "@/components/ui/logo";
+import Logo from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";

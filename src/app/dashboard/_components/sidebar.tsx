@@ -5,13 +5,20 @@ import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Search, Settings, Trash2 } from "lucide-react";
 
 import { getDocuments, getWorkspaces } from "@/lib/supabase/queries";
+import { cn } from "@/lib/utils";
 import WorkspaceDropdown from "./workspace-dropdown";
 import SidebarItem from "./sidebar-item";
 import DocumentList from "./document-list";
 import CreateDocument from "./create-document";
 import Trash from "@/components/trash";
 
-const Sidebar = async ({ params }: { params: { workspaceId: string } }) => {
+const Sidebar = async ({
+  params,
+  classNames,
+}: {
+  params: { workspaceId: string };
+  classNames?: string;
+}) => {
   const supabase = createServerComponentClient({ cookies });
 
   const {
@@ -33,7 +40,12 @@ const Sidebar = async ({ params }: { params: { workspaceId: string } }) => {
   if (documentsError || workspaceError) return;
 
   return (
-    <aside className="h-screen min-w-[240px] hidden lg:flex lg:flex-col gap-5 py-5 border border-r-2">
+    <aside
+      className={cn(
+        "h-screen min-w-[240px] hidden lg:flex lg:flex-col gap-5 py-5 border-r-2",
+        classNames
+      )}
+    >
       {/* Workspace Dropdown */}
       <div className="px-4">
         <p className="text-sm text-muted-foreground mb-3">
