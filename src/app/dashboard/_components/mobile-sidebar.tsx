@@ -13,7 +13,7 @@ const MobileSidebar = ({ children }: { children: React.ReactNode }) => {
       <>
         <div
           className="
-            hidden max-lg:flex max-lg:flex-col min-w-[240px] h-screen
+            hidden max-lg:flex max-lg:flex-col min-w-[240px] max-w-[240px] h-screen
             absolute top-0 left-0 bottom-0 z-50
             bg-background border-r-2
           "

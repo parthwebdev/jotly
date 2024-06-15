@@ -27,7 +27,7 @@ const Banner = ({ workspaceId, documentId }: BannerProps) => {
       className={cn(
         "w-full h-[35vh] relative",
         path && "bg-muted",
-        !path && "h-[20vh]"
+        !path && "h-[30vh]"
       )}
     >
       {!!path ? (

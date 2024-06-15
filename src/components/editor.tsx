@@ -30,14 +30,14 @@ const Editor = ({ initialContent, documentId }: EditorProps) => {
     await updateDocument(documentId, { data: content });
 
     // Update local state
-    // dispatch({
-    //   type: "UPDATE_DOCUMENT",
-    //   payload: {
-    //     workspaceId: workspaceId as string,
-    //     documentId,
-    //     document: { data: content },
-    //   },
-    // });
+    dispatch({
+      type: "UPDATE_DOCUMENT",
+      payload: {
+        workspaceId: workspaceId as string,
+        documentId,
+        document: { data: content },
+      },
+    });
   };
 
   return (

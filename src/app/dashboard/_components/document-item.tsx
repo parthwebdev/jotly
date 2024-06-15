@@ -8,11 +8,7 @@ import { v4 } from "uuid";
 
 import { SelectDocument } from "@/lib/supabase/schema";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  createDocument,
-  deleteDocument,
-  updateDocument,
-} from "@/lib/supabase/queries";
+import { createDocument, updateDocument } from "@/lib/supabase/queries";
 import { useAppState } from "@/components/providers/state-provider";
 import { useRouter } from "next/navigation";
 
@@ -130,7 +126,7 @@ const DocumentItem = ({
         </div>
 
         <div className="mr-2">{document.icon}</div>
-        <span className="text-muted-foreground">{document.title}</span>
+        <span className="text-muted-foreground truncate">{document.title}</span>
 
         <div className="ml-auto flex gap-1">
           <div

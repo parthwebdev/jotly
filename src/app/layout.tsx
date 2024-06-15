@@ -8,6 +8,7 @@ import { Toaster } from "sonner";
 
 import "./globals.css";
 import StateProvider from "@/components/providers/state-provider";
+import SupabaseUserProvider from "@/components/providers/user-provider";
 
 const inter = DM_Sans({ subsets: ["latin"] });
 
@@ -30,10 +31,12 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <StateProvider>
-            {children}
-            <Toaster />
-          </StateProvider>
+          <SupabaseUserProvider>
+            <StateProvider>
+              {children}
+              <Toaster />
+            </StateProvider>
+          </SupabaseUserProvider>
         </ThemeProvider>
       </body>
     </html>
